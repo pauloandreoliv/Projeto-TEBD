@@ -159,9 +159,9 @@ def generate_reports(start_date, end_date):
          total_profit = totals['total_profit']
     
          st.subheader("Totais")
-         st.metric(label="Total de Vendas", value=f"{total_sales:,.2f}")
-         st.metric(label="Total de Custo", value=f"{total_cost:,.2f}")
-         st.metric(label="Total de Lucro", value=f"{total_profit:,.2f}")
+         st.metric(label="Valor total de Vendas", value=f"{total_sales:,.2f}")
+         st.metric(label="Valor total de Custo", value=f"{total_cost:,.2f}")
+         st.metric(label="Valor total de Lucro", value=f"{total_profit:,.2f}")
          st.subheader("Indicadores Gráficos")
     
          # Valor total de vendas por data
