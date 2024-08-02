@@ -181,7 +181,7 @@ def generate_reports(start_date, end_date):
              'total_sales': state_sales['total_sales'],
              'stateabbreviation': state_sales['stateabbreviation']
          })
-         geojson_url = "https://raw.githubusercontent.com/pauloandreoliv/tebd/master/data_folium.json"
+         geojson_url = "https://raw.githubusercontent.com/pauloandreoliv/Projeto-TEBD/master/data_folium.json"
          fig = px.choropleth(map_data,
                              geojson=geojson_url,
                              locations="stateabbreviation",
