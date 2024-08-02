@@ -59,7 +59,7 @@ queries = {
         ORDER BY dp3.category
     """,
     "cost_by_category": """
-        SELECT dp3.category, SUM(fs.sales - fs.profit) as total_cost
+        SELECT dp3.category, fs.cost as total_cost
         FROM fct_sale fs
         JOIN dim_product dp3 ON fs.productkey = dp3.productkey
         JOIN dim_period dp ON fs.orderdatekey = dp.datekey
@@ -70,7 +70,7 @@ queries = {
     "totals": """
         SELECT 
             SUM(fs.sales) as total_sales, 
-            SUM(fs.sales - fs.profit) as total_cost, 
+            fs.cost as total_cost, 
             SUM(fs.profit) as total_profit
         FROM fct_sale fs
         JOIN dim_period dp ON fs.orderdatekey = dp.datekey
@@ -82,7 +82,7 @@ queries = {
                COUNT(fs.orderid) as num_sales, 
                SUM(fs.discount) as total_discount, 
                SUM(fs.profit) as total_profit, 
-               SUM(fs.sales - fs.profit) as total_cost
+               fs.cost as total_cost
         FROM fct_sale fs
         JOIN dim_product dp3 ON fs.productkey = dp3.productkey
         JOIN dim_period dp ON fs.orderdatekey = dp.datekey
@@ -123,7 +123,7 @@ queries = {
                COUNT(fs.orderid) as num_sales, 
                SUM(fs.discount) as total_discount, 
                SUM(fs.profit) as total_profit, 
-               SUM(fs.sales - fs.profit) as total_cost
+               fs.cost as total_cost
         FROM fct_sale fs
         JOIN dim_product dp3 ON fs.productkey = dp3.productkey
         JOIN dim_region dr ON fs.regionkey = dr.regionkey
@@ -138,7 +138,15 @@ queries = {
         MAX(date) AS max_date
     FROM 
         dim_period;
-    """
+    """,
+    "sales_by_customersegment": """
+        SELECT SUM(fs.sales) as total_sales, dc.segment as customer_segment
+        FROM fct_sale fs
+        JOIN dim_customer dc ON dc.customerkey = fs.customerkey
+        JOIN dim_period dp ON fs.orderdatekey = dp.datekey
+        WHERE dp.date BETWEEN %s AND %s
+        GROUP BY dc.segment
+    """,
 }
 
 # Função para gerar os gráficos e relatórios
@@ -192,7 +200,12 @@ def generate_reports(start_date, end_date):
                              labels={'sales': 'Vendas'}
                             )
          st.plotly_chart(fig)
-    
+
+         # Valor total de vendas por categoria do cliente
+         sales_by_segment = execute_query(queries["sales_by_customersegment"], (start_date, end_date))
+         fig = px.pie( sales_by_segment, names='customer_segment', values='total_sales', title="Distribuição das vendas por segmento de cliente" )
+         st.plotly_chart(fig)
+         
          # Número de vendas por categoria
          sales_by_category = execute_query(queries["sales_by_category"], (start_date, end_date))
          fig = px.bar(sales_by_category, x='category', y='num_sales', title="Número de vendas por categoria de produto")
