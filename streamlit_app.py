@@ -111,8 +111,8 @@ queries = {
         GROUP BY dp3.productname, dp3.productid
         ORDER BY dp3.productname, dp3.productid
     """,
-    "report_by_product_region": """
-        SELECT dp3.productid, dp3.productname, dr.city, dr.state, dr.region, 
+    "report_by_product_city": """
+        SELECT dp3.productid, dp3.productname, dr.city, dr.state, 
                SUM(fs.sales) as total_sales, 
                COUNT(fs.orderid) as num_sales, 
                SUM(fs.discount) as total_discount, 
@@ -123,8 +123,38 @@ queries = {
         JOIN dim_region dr ON fs.regionkey = dr.regionkey
         JOIN dim_period dp ON fs.orderdatekey = dp.datekey
         WHERE dp.date BETWEEN %s AND %s
-        GROUP BY dp3.productid, dp3.productname, dr.city, dr.state, dr.region
-        ORDER BY dp3.productid, dp3.productname, dr.city, dr.state, dr.region
+        GROUP BY dp3.productid, dp3.productname, dr.city, dr.state
+        ORDER BY dp3.productid, dp3.productname, dr.city, dr.state
+    """,
+    "report_by_product_state": """
+        SELECT dp3.productid, dp3.productname, dr.state, dr.stateabbreviation, 
+               SUM(fs.sales) as total_sales, 
+               COUNT(fs.orderid) as num_sales, 
+               SUM(fs.discount) as total_discount, 
+               SUM(fs.profit) as total_profit, 
+               SUM(fs.cost) as total_cost
+        FROM fct_sale fs
+        JOIN dim_product dp3 ON fs.productkey = dp3.productkey
+        JOIN dim_region dr ON fs.regionkey = dr.regionkey
+        JOIN dim_period dp ON fs.orderdatekey = dp.datekey
+        WHERE dp.date BETWEEN %s AND %s
+        GROUP BY dp3.productid, dp3.productname, dr.state, dr.stateabbreviation
+        ORDER BY dp3.productid, dp3.productname, dr.state, dr.stateabbreviation
+    """,
+    "report_by_product_region": """
+        SELECT dp3.productid, dp3.productname, dr.region, 
+               SUM(fs.sales) as total_sales, 
+               COUNT(fs.orderid) as num_sales, 
+               SUM(fs.discount) as total_discount, 
+               SUM(fs.profit) as total_profit, 
+               SUM(fs.cost) as total_cost
+        FROM fct_sale fs
+        JOIN dim_product dp3 ON fs.productkey = dp3.productkey
+        JOIN dim_region dr ON fs.regionkey = dr.regionkey
+        JOIN dim_period dp ON fs.orderdatekey = dp.datekey
+        WHERE dp.date BETWEEN %s AND %s
+        GROUP BY dp3.productid, dp3.productname, dr.region
+        ORDER BY dp3.productid, dp3.productname, dr.region
     """,
     "max_min_date": """
     SELECT 
@@ -214,6 +244,14 @@ def generate_reports(start_date, end_date):
          st.write("Extrato por produto")
          st.dataframe(report_by_product)
     
+         report_by_product_city = execute_query(queries["report_by_product_city"], (start_date, end_date))
+         st.write("Extrato por cidade")
+         st.dataframe(report_by_product_city)
+
+         report_by_product_state = execute_query(queries["report_by_product_state"], (start_date, end_date))
+         st.write("Extrato por estado")
+         st.dataframe(report_by_product_state)
+
          report_by_product_region = execute_query(queries["report_by_product_region"], (start_date, end_date))
          st.write("Extrato por região")
          st.dataframe(report_by_product_region)
