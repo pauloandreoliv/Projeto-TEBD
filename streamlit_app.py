@@ -13,7 +13,7 @@ def get_db_connection():
     return psycopg2.connect(
         dbname="tebd",
         user="avnadmin",
-        password= os.getenv("USER_PASSWORD"), #Alterar para senha da conexão, disponível no Colab
+        password= "AVNS_EsXVvWLc081XeyAFgXu",
         host="pg-tebd-tebd.g.aivencloud.com",
         port="11321"
     )
