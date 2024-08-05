@@ -25,7 +25,3 @@ Este projeto visa construir um dashboard de business intelligence de vendas base
 O projeto utiliza um arquivo GeoJSON para visualização geoespacial. O arquivo está disponível no repositório do GitHub da Folium:
 
 - **URL do Repositório**: [Folium GeoJSON Repository]([https://github.com/python-visualization/folium](https://github.com/python-visualization/folium-example-data/))
-
-## Observação
-
-A senha da conexão do banco de dados foi definida como variável de ambiente. Desse modo, em caso de execução local, é necessário definir a variável ou alterá-la no código antes da execução.
